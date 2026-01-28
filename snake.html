@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>貪食蛇（修正版）</title>
+  <style>
+    body{margin:0;height:100vh;display:flex;align-items:center;justify-content:center;background:#071129;color:#e6eef8;font-family:Inter,Arial}
+    .wrap{background:rgba(255,255,255,0.03);padding:18px;border-radius:12px}
+    canvas{background:#000;border-radius:8px;display:block}
+    .row{display:flex;gap:10px;align-items:center;margin-top:8px}
+    button{padding:8px 10px;border-radius:8px;border:none;background:#7c3aed;color:#fff}
+    a{display:block;margin-top:10px;color:#9ca3af}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h3>貪食蛇（修正版）</h3>
+    <canvas id="game" width="400" height="400"></canvas>
+    <div class="row">
+      <div>分數: <span id="score">0</span></div>
+      <div>最高: <span id="high">0</span></div>
+      <button id="restart">重新開始</button>
+    </div>
+    <a href="index.html">← 返回主頁</a>
+  </div>
+
+  <script>
+  (function(){
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    const scale = 20;
+    const cols = canvas.width/scale; const rows = canvas.height/scale;
+
+    let dir = {x:1,y:0};
+    let snake = [];
+    let apple = null; let grow = 0; let score = 0;
+
+    function reset(){
+      snake = [];
+      for(let i=0;i<3;i++) snake.push({x:5-i,y:5});
+      dir = {x:1,y:0};
+      placeApple(); score=0; grow=0; updateUI();
+    }
+
+    function randomPos(){ return {x:Math.floor(Math.random()*cols), y:Math.floor(Math.random()*rows)}; }
+    function placeApple(){ let p; do { p=randomPos(); let on=false; for(let s of snake) if(s.x===p.x && s.y===p.y) on=true; if(!on) break; } while(true); apple=p; }
+
+    function update(){
+      const head = {x:snake[0].x+dir.x, y:snake[0].y+dir.y};
+      // wall collision
+      if(head.x<0||head.x>=cols||head.y<0||head.y>=rows){ reset(); return; }
+      // self collision
+      if(snake.some(s=>s.x===head.x&&s.y===head.y)){ reset(); return; }
+      snake.unshift(head);
+      if(apple && head.x===apple.x && head.y===apple.y){ score+=10; grow+=2; placeApple(); updateHigh(); }
+      if(grow>0){ grow--; } else { snake.pop(); }
+      updateUI();
+    }
+
+    function draw(){
+      ctx.fillStyle='#000'; ctx.fillRect(0,0,canvas.width,canvas.height);
+      // apple
+      if(apple){ ctx.fillStyle='red'; ctx.fillRect(apple.x*scale, apple.y*scale, scale, scale); }
+      // snake
+      for(let i=0;i<snake.length;i++){ ctx.fillStyle = i===0? '#7CFC00' : '#00A000'; ctx.fillRect(snake[i].x*scale, snake[i].y*scale, scale-1, scale-1); }
+    }
+
+    function loop(){ update(); draw(); }
+
+    function updateUI(){ document.getElementById('score').textContent=score; }
+    function updateHigh(){ const h = Math.max(Number(localStorage.getItem('snakeHigh')||0), score); localStorage.setItem('snakeHigh', h); document.getElementById('high').textContent = h; }
+
+    window.addEventListener('keydown', e=>{
+      const k = e.key;
+      if((k==='ArrowUp'||k==='w'||k==='W') && dir.y!==1) dir={x:0,y:-1};
+      if((k==='ArrowDown'||k==='s'||k==='S') && dir.y!==-1) dir={x:0,y:1};
+      if((k==='ArrowLeft'||k==='a'||k==='A') && dir.x!==1) dir={x:-1,y:0};
+      if((k==='ArrowRight'||k==='d'||k==='D') && dir.x!==-1) dir={x:1,y:0};
+    });
+
+    document.getElementById('restart').addEventListener('click', reset);
+
+    // init
+    reset(); document.getElementById('high').textContent = localStorage.getItem('snakeHigh')||0;
+    setInterval(loop, 120);
+  })();
+  </script>
+</body>
+</html>
