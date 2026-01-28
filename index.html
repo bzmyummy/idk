@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>贪食蛇游戏</title>
+    <title>贪食蛇游戏增强版</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -21,13 +22,14 @@
             justify-content: center;
             min-height: 100vh;
             padding: 20px;
+            background-image: radial-gradient(circle at 20% 30%, #1a1a1a 0%, #000 100%);
         }
         
         .container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            max-width: 800px;
+            max-width: 1000px;
             width: 100%;
             gap: 20px;
         }
@@ -35,20 +37,32 @@
         .header {
             text-align: center;
             width: 100%;
-            padding-bottom: 10px;
+            padding-bottom: 15px;
             border-bottom: 2px solid #333;
+            background: linear-gradient(135deg, #111, #222);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
         }
         
         h1 {
             color: #4CAF50;
-            font-size: 2.8rem;
-            margin-bottom: 5px;
-            text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+            font-size: 3.2rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(76, 175, 80, 0.7);
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
         }
         
         .subtitle {
             color: #aaa;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.5;
         }
         
         .game-area {
@@ -65,92 +79,230 @@
         
         #game-canvas {
             background-color: #000;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
-            border: 2px solid #333;
+            border-radius: 12px;
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.4);
+            border: 3px solid #333;
+            transition: all 0.3s ease;
+        }
+        
+        #game-canvas:hover {
+            box-shadow: 0 0 40px rgba(76, 175, 80, 0.6);
         }
         
         .game-info {
-            background-color: #222;
-            border-radius: 8px;
-            padding: 20px;
-            min-width: 250px;
+            background: linear-gradient(145deg, #222, #1a1a1a);
+            border-radius: 12px;
+            padding: 25px;
+            min-width: 300px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            gap: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+            border: 1px solid #333;
         }
         
         .score-container {
             text-align: center;
-            padding: 15px;
-            background-color: #333;
-            border-radius: 6px;
+            padding: 20px;
+            background: linear-gradient(145deg, #2a2a2a, #222);
+            border-radius: 10px;
+            border: 1px solid #444;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
         }
         
         .score-title {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             color: #aaa;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
         
-        #score {
-            font-size: 3rem;
-            font-weight: bold;
+        .score-title i {
             color: #4CAF50;
         }
         
-        .controls {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        #score {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #4CAF50;
+            text-shadow: 0 0 10px rgba(76, 175, 80, 0.7);
+            margin-bottom: 10px;
         }
         
-        .control-title {
-            color: #aaa;
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-        
-        .control-item {
-            background-color: #333;
-            padding: 12px;
-            border-radius: 6px;
+        .high-score-container {
             display: flex;
             justify-content: space-between;
+            background-color: rgba(76, 175, 80, 0.1);
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #4CAF50;
         }
         
-        .key {
-            background-color: #444;
-            color: #fff;
-            padding: 4px 10px;
-            border-radius: 4px;
+        .high-score-label {
+            color: #aaa;
+            font-size: 1.1rem;
+        }
+        
+        #high-score {
+            font-size: 1.8rem;
             font-weight: bold;
+            color: #FFD700;
+        }
+        
+        .difficulty-container {
+            background: linear-gradient(145deg, #2a2a2a, #222);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #444;
+        }
+        
+        .difficulty-title {
+            font-size: 1.3rem;
+            color: #aaa;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .difficulty-title i {
+            color: #2196F3;
+        }
+        
+        .difficulty-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .difficulty-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background-color: #333;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .difficulty-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .difficulty-btn.active {
+            background-color: #2196F3;
+            box-shadow: 0 0 15px rgba(33, 150, 243, 0.5);
+        }
+        
+        .difficulty-btn.easy {
+            background-color: #4CAF50;
+        }
+        
+        .difficulty-btn.easy.active {
+            background-color: #4CAF50;
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
+        }
+        
+        .difficulty-btn.normal {
+            background-color: #FF9800;
+        }
+        
+        .difficulty-btn.normal.active {
+            background-color: #FF9800;
+            box-shadow: 0 0 15px rgba(255, 152, 0, 0.5);
+        }
+        
+        .difficulty-btn.hard {
+            background-color: #f44336;
+        }
+        
+        .difficulty-btn.hard.active {
+            background-color: #f44336;
+            box-shadow: 0 0 15px rgba(244, 67, 54, 0.5);
+        }
+        
+        .audio-controls {
+            background: linear-gradient(145deg, #2a2a2a, #222);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #444;
+        }
+        
+        .audio-title {
+            font-size: 1.3rem;
+            color: #aaa;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .audio-title i {
+            color: #9C27B0;
+        }
+        
+        .audio-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .audio-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background-color: #333;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .audio-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .audio-btn.active {
+            background-color: #9C27B0;
+            box-shadow: 0 0 15px rgba(156, 39, 176, 0.5);
         }
         
         .game-controls {
             display: flex;
             flex-direction: column;
             gap: 15px;
-            margin-top: 10px;
         }
         
         button {
-            background-color: #4CAF50;
+            background: linear-gradient(145deg, #4CAF50, #3d8b40);
             color: white;
             border: none;
-            padding: 15px;
-            border-radius: 6px;
-            font-size: 1.1rem;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 1.2rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
         
         button:hover {
-            background-color: #45a049;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(145deg, #45a049, #367c39);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(0, 0, 0, 0.3);
         }
         
         button:active {
@@ -158,56 +310,65 @@
         }
         
         #restart-btn {
-            background-color: #f44336;
+            background: linear-gradient(145deg, #f44336, #d32f2f);
         }
         
         #restart-btn:hover {
-            background-color: #d32f2f;
+            background: linear-gradient(145deg, #d32f2f, #b71c1c);
         }
         
         #pause-btn {
-            background-color: #2196F3;
+            background: linear-gradient(145deg, #2196F3, #0b7dda);
         }
         
         #pause-btn:hover {
-            background-color: #0b7dda;
+            background: linear-gradient(145deg, #0b7dda, #0a68b4);
         }
         
         .instructions {
-            background-color: #222;
-            border-radius: 8px;
-            padding: 20px;
+            background: linear-gradient(145deg, #222, #1a1a1a);
+            border-radius: 12px;
+            padding: 25px;
             margin-top: 10px;
             width: 100%;
+            border: 1px solid #333;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
         }
         
         .instructions h2 {
             color: #4CAF50;
-            margin-bottom: 15px;
-            font-size: 1.5rem;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         .instructions p {
             line-height: 1.6;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             color: #ccc;
         }
         
         .instruction-item {
             display: flex;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
         }
         
         .instruction-icon {
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-right: 15px;
             flex-shrink: 0;
+            font-size: 1.2rem;
         }
         
         .snake-icon {
@@ -218,26 +379,40 @@
             background-color: #f44336;
         }
         
+        .sound-icon {
+            background-color: #9C27B0;
+        }
+        
+        .score-icon {
+            background-color: #FFD700;
+        }
+        
         .mobile-controls {
             display: none;
             grid-template-columns: repeat(3, 1fr);
             grid-template-rows: repeat(3, 1fr);
-            gap: 10px;
+            gap: 12px;
             margin-top: 20px;
-            width: 200px;
-            height: 200px;
+            width: 250px;
+            height: 250px;
         }
         
         .mobile-btn {
             background-color: #333;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             color: white;
-            font-size: 1.5rem;
+            font-size: 2rem;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .mobile-btn:active {
+            background-color: #4CAF50;
+            transform: scale(0.95);
         }
         
         #up-btn {
@@ -266,24 +441,56 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
+            background-color: rgba(0, 0, 0, 0.9);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            border-radius: 8px;
+            border-radius: 12px;
             display: none;
+            z-index: 10;
+            padding: 20px;
+            text-align: center;
         }
         
         .game-over h2 {
-            font-size: 3rem;
+            font-size: 3.5rem;
             color: #f44336;
             margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(244, 67, 54, 0.7);
         }
         
         .game-over p {
             font-size: 1.5rem;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        
+        .game-over-stats {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            width: 80%;
+            max-width: 400px;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .stat-value {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        .game-over-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
         }
         
         .footer {
@@ -291,10 +498,22 @@
             color: #666;
             text-align: center;
             font-size: 0.9rem;
-            padding: 10px;
+            padding: 15px;
+            border-top: 1px solid #333;
+            width: 100%;
         }
         
-        @media (max-width: 768px) {
+        .feature-highlight {
+            display: inline-block;
+            background-color: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin: 0 5px;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 900px) {
             .game-area {
                 flex-direction: column;
                 align-items: center;
@@ -302,82 +521,158 @@
             
             .game-info {
                 width: 100%;
-                max-width: 500px;
+                max-width: 600px;
             }
             
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            #game-canvas {
+                width: 90vw;
+                height: 90vw;
+                max-width: 500px;
+                max-height: 500px;
+            }
+        }
+        
+        @media (max-width: 600px) {
             .mobile-controls {
                 display: grid;
             }
             
             h1 {
-                font-size: 2.2rem;
+                font-size: 2rem;
+            }
+            
+            .difficulty-buttons, .audio-buttons {
+                flex-direction: column;
+            }
+            
+            .game-over h2 {
+                font-size: 2.5rem;
+            }
+            
+            .game-over-stats {
+                width: 95%;
             }
         }
         
-        @media (max-width: 480px) {
-            #game-canvas {
-                width: 95vw;
-                height: 95vw;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .game-info {
-                padding: 15px;
-            }
+        .game-stat {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #444;
+        }
+        
+        .game-stat-label {
+            color: #aaa;
+        }
+        
+        .game-stat-value {
+            color: #fff;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>贪食蛇游戏</h1>
-            <p class="subtitle">控制蛇移动，吃掉红色苹果变长，避免撞墙或撞到自己</p>
+            <h1><i class="fas fa-gamepad"></i> 贪食蛇游戏增强版</h1>
+            <p class="subtitle">控制蛇移动，吃掉<span class="feature-highlight">红色苹果</span>变长，避免撞墙或撞到自己。新增<span class="feature-highlight">最高分记录</span>、<span class="feature-highlight">音效系统</span>和<span class="feature-highlight">难度选择</span>功能！</p>
         </div>
         
         <div class="game-area">
             <div class="game-container">
                 <canvas id="game-canvas" width="600" height="600"></canvas>
                 <div class="game-over" id="game-over">
-                    <h2>游戏结束</h2>
-                    <p>你的得分: <span id="final-score">0</span></p>
-                    <button id="restart-over-btn">重新开始</button>
+                    <h2><i class="fas fa-skull-crossbones"></i> 游戏结束</h2>
+                    <div class="game-over-stats">
+                        <div class="stat-item">
+                            <span>本次得分:</span>
+                            <span class="stat-value" id="final-score">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>历史最高分:</span>
+                            <span class="stat-value" id="final-high-score">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>游戏难度:</span>
+                            <span class="stat-value" id="final-difficulty">普通</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>蛇的长度:</span>
+                            <span class="stat-value" id="final-length">3</span>
+                        </div>
+                    </div>
+                    <p>按空格键或点击按钮重新开始</p>
+                    <div class="game-over-buttons">
+                        <button id="restart-over-btn"><i class="fas fa-redo"></i> 重新开始</button>
+                        <button id="change-difficulty-btn"><i class="fas fa-sliders-h"></i> 更改难度</button>
+                    </div>
                 </div>
             </div>
             
             <div class="game-info">
                 <div class="score-container">
-                    <div class="score-title">当前得分</div>
+                    <div class="score-title">
+                        <i class="fas fa-trophy"></i> 当前得分
+                    </div>
                     <div id="score">0</div>
+                    
+                    <div class="high-score-container">
+                        <div class="high-score-label">
+                            <i class="fas fa-crown"></i> 最高分
+                        </div>
+                        <div id="high-score">0</div>
+                    </div>
+                    
+                    <div class="game-stat">
+                        <div class="game-stat-label">难度:</div>
+                        <div class="game-stat-value" id="current-difficulty">普通</div>
+                    </div>
+                    <div class="game-stat">
+                        <div class="game-stat-label">长度:</div>
+                        <div class="game-stat-value" id="snake-length">3</div>
+                    </div>
                 </div>
                 
-                <div class="controls">
-                    <div class="control-title">游戏控制</div>
-                    <div class="control-item">
-                        <span>移动控制</span>
-                        <div>
-                            <span class="key">↑</span>
-                            <span class="key">↓</span>
-                            <span class="key">←</span>
-                            <span class="key">→</span>
-                        </div>
+                <div class="difficulty-container">
+                    <div class="difficulty-title">
+                        <i class="fas fa-chart-line"></i> 难度选择
                     </div>
-                    <div class="control-item">
-                        <span>暂停/继续</span>
-                        <span class="key">空格</span>
+                    <div class="difficulty-buttons">
+                        <button class="difficulty-btn easy active" id="easy-btn">简单</button>
+                        <button class="difficulty-btn normal" id="normal-btn">普通</button>
+                        <button class="difficulty-btn hard" id="hard-btn">困难</button>
                     </div>
-                    <div class="control-item">
-                        <span>重新开始</span>
-                        <span class="key">R</span>
+                </div>
+                
+                <div class="audio-controls">
+                    <div class="audio-title">
+                        <i class="fas fa-volume-up"></i> 音效控制
+                    </div>
+                    <div class="audio-buttons">
+                        <button class="audio-btn active" id="audio-on-btn">
+                            <i class="fas fa-volume-up"></i> 开启音效
+                        </button>
+                        <button class="audio-btn" id="audio-off-btn">
+                            <i class="fas fa-volume-mute"></i> 关闭音效
+                        </button>
                     </div>
                 </div>
                 
                 <div class="game-controls">
-                    <button id="start-btn">开始游戏</button>
-                    <button id="pause-btn">暂停游戏</button>
-                    <button id="restart-btn">重新开始</button>
+                    <button id="start-btn">
+                        <i class="fas fa-play"></i> 开始游戏
+                    </button>
+                    <button id="pause-btn">
+                        <i class="fas fa-pause"></i> 暂停游戏
+                    </button>
+                    <button id="restart-btn">
+                        <i class="fas fa-redo"></i> 重新开始
+                    </button>
                 </div>
                 
                 <div class="mobile-controls">
@@ -390,22 +685,49 @@
         </div>
         
         <div class="instructions">
-            <h2>游戏说明</h2>
+            <h2><i class="fas fa-info-circle"></i> 游戏说明</h2>
             <div class="instruction-item">
-                <div class="instruction-icon snake-icon">🐍</div>
-                <div>使用键盘方向键控制蛇的移动方向</div>
+                <div class="instruction-icon snake-icon">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <div><strong>游戏控制：</strong>使用键盘方向键或屏幕上的方向按钮控制蛇的移动方向。按空格键暂停/继续游戏，按R键重新开始。</div>
             </div>
             <div class="instruction-item">
-                <div class="instruction-icon apple-icon">🍎</div>
-                <div>吃到红色苹果可以增加蛇的长度和得分</div>
+                <div class="instruction-icon apple-icon">
+                    <i class="fas fa-apple-alt"></i>
+                </div>
+                <div><strong>游戏目标：</strong>吃到红色苹果可以增加蛇的长度和得分。每吃一个苹果得10分。</div>
             </div>
-            <p>游戏规则：蛇不能撞到墙壁或自己的身体，否则游戏结束。蛇移动速度会随着得分增加而逐渐加快。</p>
+            <div class="instruction-item">
+                <div class="instruction-icon sound-icon">
+                    <i class="fas fa-music"></i>
+                </div>
+                <div><strong>音效系统：</strong>游戏包含三种音效：吃苹果音效、碰撞音效和背景音乐。可以在音效控制面板中开启或关闭。</div>
+            </div>
+            <div class="instruction-item">
+                <div class="instruction-icon score-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div><strong>最高分记录：</strong>游戏会自动保存您的最高分记录。尝试打破自己的记录吧！</div>
+            </div>
+            <p><strong>游戏规则：</strong>蛇不能撞到墙壁或自己的身体，否则游戏结束。蛇移动速度会随着得分增加而逐渐加快，不同难度级别会影响初始速度和分数加成。</p>
         </div>
         
         <div class="footer">
-            HTML5贪食蛇游戏 | 背景黑色 | 红色苹果 | 吃到苹果变长
+            HTML5贪食蛇游戏增强版 | 最高分记录 | 音效系统 | 难度选择 | 吃到苹果变长
         </div>
     </div>
+
+    <!-- 音频元素 -->
+    <audio id="eat-sound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="crash-sound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-retro-game-emergency-alarm-1000.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="bg-music" loop preload="auto">
+        <source src="https://assets.mixkit.co/music/preview/mixkit-game-show-suspense-waiting-667.mp3" type="audio/mpeg">
+    </audio>
 
     <script>
         // 获取Canvas元素和上下文
@@ -418,6 +740,8 @@
         let gamePaused = false;
         let gameLoop;
         let speed = 10; // 初始速度（帧/秒）
+        let difficulty = 'normal'; // 默认难度
+        let audioEnabled = true; // 音效开关
         
         // 蛇的初始设置
         let snake = [
@@ -444,12 +768,33 @@
         
         // 获取DOM元素
         const scoreElement = document.getElementById('score');
+        const highScoreElement = document.getElementById('high-score');
         const startBtn = document.getElementById('start-btn');
         const pauseBtn = document.getElementById('pause-btn');
         const restartBtn = document.getElementById('restart-btn');
         const restartOverBtn = document.getElementById('restart-over-btn');
+        const changeDifficultyBtn = document.getElementById('change-difficulty-btn');
         const gameOverScreen = document.getElementById('game-over');
         const finalScoreElement = document.getElementById('final-score');
+        const finalHighScoreElement = document.getElementById('final-high-score');
+        const finalDifficultyElement = document.getElementById('final-difficulty');
+        const finalLengthElement = document.getElementById('final-length');
+        const currentDifficultyElement = document.getElementById('current-difficulty');
+        const snakeLengthElement = document.getElementById('snake-length');
+        
+        // 难度按钮
+        const easyBtn = document.getElementById('easy-btn');
+        const normalBtn = document.getElementById('normal-btn');
+        const hardBtn = document.getElementById('hard-btn');
+        
+        // 音效按钮
+        const audioOnBtn = document.getElementById('audio-on-btn');
+        const audioOffBtn = document.getElementById('audio-off-btn');
+        
+        // 音频元素
+        const eatSound = document.getElementById('eat-sound');
+        const crashSound = document.getElementById('crash-sound');
+        const bgMusic = document.getElementById('bg-music');
         
         // 移动控制按钮（移动端）
         const upBtn = document.getElementById('up-btn');
@@ -457,11 +802,58 @@
         const leftBtn = document.getElementById('left-btn');
         const rightBtn = document.getElementById('right-btn');
         
+        // 初始化最高分
+        let highScore = localStorage.getItem('snakeHighScore') || 0;
+        highScoreElement.textContent = highScore;
+        
+        // 初始化难度设置
+        const difficultySettings = {
+            easy: {
+                speed: 8,
+                scoreMultiplier: 1,
+                initialLength: 3,
+                name: '简单'
+            },
+            normal: {
+                speed: 10,
+                scoreMultiplier: 1,
+                initialLength: 3,
+                name: '普通'
+            },
+            hard: {
+                speed: 13,
+                scoreMultiplier: 1.5,
+                initialLength: 5,
+                name: '困难'
+            }
+        };
+        
+        // 更新蛇长度显示
+        function updateSnakeLength() {
+            snakeLengthElement.textContent = snake.length;
+        }
+        
         // 绘制游戏元素
         function drawGame() {
             // 清空画布
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制网格背景
+            ctx.strokeStyle = '#111';
+            ctx.lineWidth = 0.5;
+            for (let x = 0; x <= canvas.width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = 0; y <= canvas.height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
             
             // 绘制蛇
             snake.forEach((segment, index) => {
@@ -525,15 +917,16 @@
             ctx.fillStyle = '#f44336';
             drawApple(food.x * gridSize + gridSize/2, food.y * gridSize + gridSize/2, gridSize/2 - 2);
             
-            // 绘制分数
+            // 绘制分数和难度
             ctx.fillStyle = '#fff';
-            ctx.font = '16px Arial';
+            ctx.font = 'bold 16px Arial';
             ctx.textAlign = 'left';
             ctx.fillText(`得分: ${score}`, 10, 20);
+            ctx.fillText(`难度: ${difficultySettings[difficulty].name}`, 10, 40);
             
             // 如果游戏暂停，显示暂停文本
             if (gamePaused && gameRunning) {
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 
                 ctx.fillStyle = '#fff';
@@ -606,9 +999,16 @@
             
             // 检查是否吃到食物
             if (head.x === food.x && head.y === food.y) {
-                // 增加分数
-                score += 10;
+                // 根据难度计算得分
+                const scoreIncrease = 10 * difficultySettings[difficulty].scoreMultiplier;
+                score += scoreIncrease;
                 scoreElement.textContent = score;
+                
+                // 播放吃苹果音效
+                if (audioEnabled) {
+                    eatSound.currentTime = 0;
+                    eatSound.play().catch(e => console.log("音频播放失败:", e));
+                }
                 
                 // 每得50分增加一次速度
                 if (score % 50 === 0) {
@@ -623,6 +1023,9 @@
                 // 如果没有吃到食物，移除蛇尾
                 snake.pop();
             }
+            
+            // 更新蛇长度显示
+            updateSnakeLength();
             
             // 更新上一个移动方向
             lastDx = dx;
@@ -662,25 +1065,34 @@
             gameRunning = false;
             clearInterval(gameLoop);
             
-            // 显示游戏结束画面
+            // 停止背景音乐
+            if (audioEnabled) {
+                bgMusic.pause();
+                bgMusic.currentTime = 0;
+                
+                // 播放碰撞音效
+                crashSound.currentTime = 0;
+                crashSound.play().catch(e => console.log("音频播放失败:", e));
+            }
+            
+            // 更新最高分
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('snakeHighScore', highScore);
+                highScoreElement.textContent = highScore;
+            }
+            
+            // 更新游戏结束界面信息
             finalScoreElement.textContent = score;
+            finalHighScoreElement.textContent = highScore;
+            finalDifficultyElement.textContent = difficultySettings[difficulty].name;
+            finalLengthElement.textContent = snake.length;
+            
+            // 显示游戏结束画面
             gameOverScreen.style.display = 'flex';
             
             // 绘制最后一帧
             drawGame();
-            
-            // 在游戏结束画面上绘制"游戏结束"文字
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = '#f44336';
-            ctx.font = 'bold 50px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('游戏结束', canvas.width/2, canvas.height/2 - 40);
-            
-            ctx.fillStyle = '#fff';
-            ctx.font = '30px Arial';
-            ctx.fillText(`最终得分: ${score}`, canvas.width/2, canvas.height/2 + 20);
         }
         
         // 开始游戏
@@ -694,13 +1106,23 @@
             gamePaused = false;
             gameOverScreen.style.display = 'none';
             
+            // 根据难度设置初始速度
+            speed = difficultySettings[difficulty].speed;
+            
             // 开始游戏循环
             gameLoop = setInterval(updateGame, 1000 / speed);
             
+            // 播放背景音乐
+            if (audioEnabled) {
+                bgMusic.currentTime = 0;
+                bgMusic.volume = 0.3;
+                bgMusic.play().catch(e => console.log("背景音乐播放失败:", e));
+            }
+            
             // 更新按钮文本
-            startBtn.textContent = '游戏进行中';
+            startBtn.innerHTML = '<i class="fas fa-play"></i> 游戏进行中';
             startBtn.disabled = true;
-            pauseBtn.textContent = '暂停游戏';
+            pauseBtn.innerHTML = '<i class="fas fa-pause"></i> 暂停游戏';
             
             // 绘制初始游戏状态
             drawGame();
@@ -713,11 +1135,21 @@
             gamePaused = !gamePaused;
             
             if (gamePaused) {
-                pauseBtn.textContent = '继续游戏';
+                pauseBtn.innerHTML = '<i class="fas fa-play"></i> 继续游戏';
                 clearInterval(gameLoop);
+                
+                // 暂停背景音乐
+                if (audioEnabled) {
+                    bgMusic.pause();
+                }
             } else {
-                pauseBtn.textContent = '暂停游戏';
+                pauseBtn.innerHTML = '<i class="fas fa-pause"></i> 暂停游戏';
                 gameLoop = setInterval(updateGame, 1000 / speed);
+                
+                // 继续背景音乐
+                if (audioEnabled) {
+                    bgMusic.play().catch(e => console.log("背景音乐播放失败:", e));
+                }
             }
             
             drawGame();
@@ -732,12 +1164,17 @@
         
         // 重置游戏状态
         function resetGame() {
-            // 重置蛇
-            snake = [
-                {x: 10, y: 10},
-                {x: 9, y: 10},
-                {x: 8, y: 10}
-            ];
+            // 根据难度设置初始蛇长度
+            const initialLength = difficultySettings[difficulty].initialLength;
+            snake = [];
+            
+            // 创建初始蛇
+            for (let i = 0; i < initialLength; i++) {
+                snake.push({x: 10 + i, y: 10});
+            }
+            
+            // 反转蛇的方向，使蛇头在正确位置
+            snake.reverse();
             
             // 重置方向
             dx = 1;
@@ -745,18 +1182,20 @@
             lastDx = 1;
             lastDy = 0;
             
-            // 重置分数和速度
+            // 重置分数
             score = 0;
-            speed = 10;
             scoreElement.textContent = score;
+            
+            // 更新蛇长度显示
+            updateSnakeLength();
             
             // 生成新食物
             generateFood();
             
             // 重置按钮状态
-            startBtn.textContent = '开始游戏';
+            startBtn.innerHTML = '<i class="fas fa-play"></i> 开始游戏';
             startBtn.disabled = false;
-            pauseBtn.textContent = '暂停游戏';
+            pauseBtn.innerHTML = '<i class="fas fa-pause"></i> 暂停游戏';
             
             // 隐藏游戏结束画面
             gameOverScreen.style.display = 'none';
@@ -765,71 +1204,52 @@
             drawGame();
         }
         
-        // 键盘控制
-        function changeDirection(newDx, newDy) {
-            // 防止蛇直接反向移动
-            if ((newDx !== 0 && newDx === -lastDx) || (newDy !== 0 && newDy === -lastDy)) {
-                return;
+        // 设置游戏难度
+        function setDifficulty(level) {
+            difficulty = level;
+            currentDifficultyElement.textContent = difficultySettings[level].name;
+            
+            // 更新按钮状态
+            easyBtn.classList.remove('active');
+            normalBtn.classList.remove('active');
+            hardBtn.classList.remove('active');
+            
+            if (level === 'easy') {
+                easyBtn.classList.add('active');
+            } else if (level === 'normal') {
+                normalBtn.classList.add('active');
+            } else {
+                hardBtn.classList.add('active');
             }
             
-            dx = newDx;
-            dy = newDy;
+            // 如果游戏正在运行，重新开始游戏以应用新难度
+            if (gameRunning) {
+                restartGame();
+            }
         }
         
-        // 事件监听
-        document.addEventListener('keydown', (event) => {
-            switch(event.key) {
-                case 'ArrowUp':
-                    event.preventDefault();
-                    changeDirection(0, -1);
-                    break;
-                case 'ArrowDown':
-                    event.preventDefault();
-                    changeDirection(0, 1);
-                    break;
-                case 'ArrowLeft':
-                    event.preventDefault();
-                    changeDirection(-1, 0);
-                    break;
-                case 'ArrowRight':
-                    event.preventDefault();
-                    changeDirection(1, 0);
-                    break;
-                case ' ':
-                    event.preventDefault();
-                    if (gameRunning) {
-                        togglePause();
-                    } else {
-                        startGame();
-                    }
-                    break;
-                case 'r':
-                case 'R':
-                    event.preventDefault();
-                    restartGame();
-                    break;
+        // 切换音效开关
+        function toggleAudio(enabled) {
+            audioEnabled = enabled;
+            
+            // 更新按钮状态
+            if (enabled) {
+                audioOnBtn.classList.add('active');
+                audioOffBtn.classList.remove('active');
+                
+                // 如果游戏正在运行，恢复背景音乐
+                if (gameRunning && !gamePaused) {
+                    bgMusic.play().catch(e => console.log("背景音乐播放失败:", e));
+                }
+            } else {
+                audioOnBtn.classList.remove('active');
+                audioOffBtn.classList.add('active');
+                
+                // 停止所有音频
+                eatSound.pause();
+                crashSound.pause();
+                bgMusic.pause();
             }
-        });
+        }
         
-        // 按钮事件监听
-        startBtn.addEventListener('click', startGame);
-        pauseBtn.addEventListener('click', togglePause);
-        restartBtn.addEventListener('click', restartGame);
-        restartOverBtn.addEventListener('click', restartGame);
-        
-        // 移动端控制按钮事件
-        upBtn.addEventListener('click', () => changeDirection(0, -1));
-        downBtn.addEventListener('click', () => changeDirection(0, 1));
-        leftBtn.addEventListener('click', () => changeDirection(-1, 0));
-        rightBtn.addEventListener('click', () => changeDirection(1, 0));
-        
-        // 触摸控制（防止移动端滑动）
-        canvas.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-        }, { passive: false });
-        
-        // 初始绘制
-        drawGame();
-    </script>
-</body>
-</html>
+        // 键盘控制
