@@ -1,18 +1,55 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-HK">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>贪食蛇游戏增强版</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mini Arcade - 我的遊戲館</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
+        :root{--bg:#0f1724;--card:#111827;--accent:#7c3aed;--muted:#9ca3af;}
+        html,body{height:100%;margin:0;font-family:Inter, Arial, sans-serif;background:linear-gradient(180deg,#071129 0%, #0f1724 100%);color:#e6eef8}
+        .wrap{max-width:1000px;margin:48px auto;padding:24px}
+        h1{font-size:2rem;margin:0 0 16px}
+        p.lead{color:var(--muted);margin-top:6px}
+        .games{display:flex;flex-wrap:wrap;gap:14px;margin-top:26px}
+        .card{background:rgba(255,255,255,0.03);padding:20px;border-radius:12px;min-width:220px;text-align:center;flex:1 1 220px;backdrop-filter:blur(6px);text-decoration:none;color:inherit;transition:transform .18s ease,box-shadow .18s}
+        .card:hover{transform:translateY(-6px);box-shadow:0 8px 30px rgba(15,23,42,.6)}
+        .emoji{font-size:2.2rem}
+        .meta{color:var(--muted);font-size:0.9rem;margin-top:8px}
+        footer{margin-top:36px;color:var(--muted);font-size:0.85rem}
+        .small{font-size:0.85rem;color:var(--muted)}
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <h1>🎮 Mini Arcade — 我的遊戲館</h1>
+        <p class="lead">開一個頁面即可玩不同小遊戲。按卡片進入遊戲，遊戲完成後點擊「返回主頁」。</p>
+
+        <div class="games">
+            <a class="card" href="game1.html">
+                <div class="emoji">✨</div>
+                <div style="font-weight:600;margin-top:8px">體感粒子互動</div>
+                <div class="meta">Three.js + MediaPipe Hands — 用手勢控制粒子</div>
+            </a>
+
+            <a class="card" href="game2.html">
+                <div class="emoji">🎯</div>
+                <div style="font-weight:600;margin-top:8px">猜數字</div>
+                <div class="meta">簡單互動式猜數字遊戲，適合快速玩一局</div>
+            </a>
+
+            <a class="card" href="game3.html">
+                <div class="emoji">✊✌️✋</div>
+                <div style="font-weight:600;margin-top:8px">包剪揼（石頭剪子布）</div>
+                <div class="meta">本機對戰與計分</div>
+            </a>
+        </div>
+
+        <footer>
+            <div class="small">把此資料夾發佈到 GitHub Pages（username.github.io）即可作為你的遊戲門戶。</div>
+        </footer>
+    </div>
+</body>
+</html>
         body {
             background-color: #111;
             color: #fff;

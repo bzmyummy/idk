@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>體感粒子互動 — Game 1</title>
+    <style>
+        html,body{height:100%;margin:0;background:#000;color:#fff;font-family:Inter,Arial}
+        #ui{position:fixed;right:12px;top:12px;background:rgba(0,0,0,0.5);padding:10px;border-radius:8px;backdrop-filter:blur(6px);min-width:220px}
+        #back{display:inline-block;margin-bottom:8px;color:#fff;text-decoration:none}
+        label{display:block;font-size:13px;margin-top:8px;color:#cbd5e1}
+        button,select,input[type=range]{width:100%;margin-top:6px}
+        #status{position:fixed;left:12px;top:12px;background:rgba(0,0,0,0.45);padding:8px;border-radius:8px;font-size:13px}
+        canvas{display:block}
+    </style>
+    <script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+</head>
+<body>
+    <a id="back" href="index.html">← 返回主頁</a>
+    <div id="status">Camera: <span id="camState">off</span> • Hands: <span id="handsCount">0</span></div>
+    <div id="ui">
+        <div style="font-weight:600">控制面板</div>
+        <label>模板
+            <select id="template">
+                <option value="heart">Heart</option>
+                <option value="flower">Flower</option>
+                <option value="saturn">Saturn</option>
+                <option value="fireworks">Fireworks</option>
+                <option value="extra">Extra</option>
+            </select>
+        </label>
+        <label>顏色
+            <input id="color" type="color" value="#ff66cc" />
+        </label>
+        <label>手勢靈敏度
+            <input id="sensitivity" type="range" min="0" max="2" step="0.01" value="1" />
+        </label>
+        <button id="reset">Reset</button>
+    </div>
+
+    <script>
+    // GAME_RULES central config
+    const GAME_RULES = {
+        events: ['OPEN_BOTH','CLOSE_BOTH','PINCH_LEFT','PINCH_RIGHT','MOVE_LEFT_HAND','MOVE_RIGHT_HAND','NO_HANDS'],
+        behavior: {
+            OPEN_BOTH: (state)=> state.expand(),
+            CLOSE_BOTH: (state)=> state.implode(),
+            PINCH_LEFT: (state)=> state.switchTemplate(),
+            PINCH_RIGHT: (state)=> state.switchTemplate(),
+            MOVE_LEFT_HAND: (state,hand)=> state.nudge(hand,'left'),
+            MOVE_RIGHT_HAND: (state,hand)=> state.nudge(hand,'right'),
+            NO_HANDS: (state)=> state.relax()
+        }
+    };
+
+    // Basic Three.js particle system with buffer geometry
+    let scene, camera, renderer, points, positions, basePositions, colors, particleCount=20000;
+    let template='heart';
+    const state = {scale:1, targetScale:1, color:new THREE.Color('#ff66cc'), templateIndex:0, templates:['heart','flower','saturn','fireworks','extra']};
+
+    function initThree(){
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 1000);
+        camera.position.z = 100;
+        renderer = new THREE.WebGLRenderer({antialias:true});
+        renderer.setSize(innerWidth, innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        positions = new Float32Array(particleCount*3);
+        basePositions = new Float32Array(particleCount*3);
+        colors = new Float32Array(particleCount*3);
+
+        for(let i=0;i<particleCount;i++){
+            const i3 = i*3;
+            basePositions[i3]= (Math.random()-0.5)*200;
+            basePositions[i3+1]= (Math.random()-0.5)*200;
+            basePositions[i3+2]= (Math.random()-0.5)*200;
+            positions[i3]=basePositions[i3]; positions[i3+1]=basePositions[i3+1]; positions[i3+2]=basePositions[i3+2];
+            colors[i3]=state.color.r; colors[i3+1]=state.color.g; colors[i3+2]=state.color.b;
+        }
+
+        const geom = new THREE.BufferGeometry();
+        geom.setAttribute('position', new THREE.BufferAttribute(positions,3));
+        geom.setAttribute('color', new THREE.BufferAttribute(colors,3));
+        const mat = new THREE.PointsMaterial({size:1.6,vertexColors:true,transparent:true,opacity:0.95});
+        points = new THREE.Points(geom,mat);
+        scene.add(points);
+
+        window.addEventListener('resize',()=>{
+            camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight);
+        });
+    }
+
+    function seedTemplate(t){
+        template=t;
+        // write into basePositions to represent different shapes
+        if(t==='heart'){
+            for(let i=0;i<particleCount;i++){
+                const a = Math.random()*Math.PI*2; const r = Math.random();
+                const x = 16*Math.pow(Math.sin(a),3)*(1-r*0.6);
+                const y = 13*Math.cos(a)-5*Math.cos(2*a)-2*Math.cos(3*a)-Math.cos(4*a);
+                const z = (Math.random()-0.5)*8;
+                const i3=i*3; basePositions[i3]=x*2+ (Math.random()-0.5)*6; basePositions[i3+1]=y*1.5 + (Math.random()-0.5)*6; basePositions[i3+2]=z;
+            }
+        } else if(t==='flower'){
+            for(let i=0;i<particleCount;i++){
+                const p = i/particleCount*Math.PI*8; const r = Math.sin(6*p)*30 + Math.cos(3*p)*10 + Math.random()*10;
+                const x=r*Math.cos(p); const y=r*Math.sin(p); const z=(Math.random()-0.5)*6;
+                const i3=i*3; basePositions[i3]=x; basePositions[i3+1]=y; basePositions[i3+2]=z;
+            }
+        } else if(t==='saturn'){
+            for(let i=0;i<particleCount;i++){
+                const ang = Math.random()*Math.PI*2; const rad = 50 + (Math.random()-0.5)*16; const h = (Math.random()-0.5)*8;
+                const i3=i*3; basePositions[i3]=Math.cos(ang)*rad; basePositions[i3+1]=h; basePositions[i3+2]=Math.sin(ang)*rad;
+            }
+        } else if(t==='fireworks'){
+            for(let i=0;i<particleCount;i++){
+                const dir = new THREE.Vector3((Math.random()-0.5),(Math.random()-0.5),(Math.random()-0.5)).normalize(); const mag = Math.random()*80;
+                const i3=i*3; basePositions[i3]=dir.x*mag; basePositions[i3+1]=dir.y*mag; basePositions[i3+2]=dir.z*mag;
+            }
+        } else {
+            for(let i=0;i<particleCount;i++){
+                const i3=i*3; basePositions[i3]=(Math.random()-0.5)*200; basePositions[i3+1]=(Math.random()-0.5)*200;basePositions[i3+2]=(Math.random()-0.5)*200;
+            }
+        }
+    }
+
+    // Smooth lerp of positions -> target basePositions
+    function updatePositionsLerp(t){
+        const pos = points.geometry.attributes.position.array;
+        for(let i=0;i<pos.length;i++){
+            pos[i] += (basePositions[i] - pos[i]) * 0.06; // smooth
+        }
+        points.geometry.attributes.position.needsUpdate = true;
+    }
+
+    function animate(){
+        requestAnimationFrame(animate);
+        // smooth scale
+        state.scale += (state.targetScale - state.scale)*0.08;
+        points.scale.setScalar(1 + state.scale*0.8);
+        updatePositionsLerp();
+        renderer.render(scene,camera);
+    }
+
+    // interaction functions used by GAME_RULES
+    const Interactions = {
+        expand(){ state.targetScale = 1.8; },
+        implode(){ state.targetScale = 0.2; },
+        switchTemplate(){ const idx = (state.templates.indexOf(template)+1)%state.templates.length; seedTemplate(state.templates[idx]); },
+        nudge(hand,side){ const idx = Math.floor(Math.random()*particleCount)*3; basePositions[idx]+= (hand.x-0.5)*40; basePositions[idx+1]+= (hand.y-0.5)*40; },
+        relax(){ state.targetScale = 1; }
+    };
+
+    // ---------- MediaPipe Hands setup & mapping ----------
+    let handsCountEl = document.getElementById('handsCount');
+    let camStateEl = document.getElementById('camState');
+    const hands = new Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
+    hands.setOptions({maxNumHands:2,minDetectionConfidence:0.6,minTrackingConfidence:0.6});
+    let cameraFeed;
+    function onResults(results){
+        const cnt = (results.multiHandLandmarks||[]).length; document.getElementById('handsCount').textContent = cnt;
+        if(cnt===0){ GAME_RULES.behavior.NO_HANDS(Interactions); return; }
+        // compute openness for each hand
+        results.multiHandedness && results.multiHandLandmarks.forEach((landmarks, i)=>{
+            const thumbTip = landmarks[4]; const indexTip = landmarks[8];
+            const palm = landmarks[0];
+            const distThumbIndex = Math.hypot( (thumbTip.x-indexTip.x), (thumbTip.y-indexTip.y) );
+            // openness measure: average finger tip to wrist distance
+            let sum=0; const tips=[8,12,16,20]; tips.forEach(j=>{ const t=landmarks[j]; sum+=Math.hypot(t.x-palm.x,t.y-palm.y); });
+            let openness = (sum/4) / 0.25; openness = Math.max(0,Math.min(1,openness));
+            // smoothed
+            if(!landmarks._openness) landmarks._openness = openness; else landmarks._openness = landmarks._openness*0.85 + openness*0.15;
+            if(landmarks._openness>0.45){ GAME_RULES.behavior.OPEN_BOTH && GAME_RULES.behavior.OPEN_BOTH(Interactions); } else { GAME_RULES.behavior.CLOSE_BOTH && GAME_RULES.behavior.CLOSE_BOTH(Interactions); }
+            if(distThumbIndex<0.03) { // pinch
+                GAME_RULES.behavior.PINCH_LEFT && GAME_RULES.behavior.PINCH_LEFT(Interactions);
+            }
+            GAME_RULES.behavior.MOVE_RIGHT_HAND && GAME_RULES.behavior.MOVE_RIGHT_HAND(Interactions, {x:landmarks[8].x,y:landmarks[8].y});
+        });
+    }
+
+    hands.onResults(onResults);
+
+    async function startCamera(){
+        try{
+            const video = document.createElement('video'); video.style.display='none'; document.body.appendChild(video);
+            const stream = await navigator.mediaDevices.getUserMedia({video:{width:640,height:480}});
+            video.srcObject = stream; await video.play(); camStateEl.textContent='on';
+            cameraFeed = new Camera(video,{onFrame: async ()=>{ await hands.send({image: video}); },width:640,height:480});
+            cameraFeed.start();
+        }catch(e){ camStateEl.textContent='off'; alert('未能開啟攝影機，請允許攝影機權限或在支援的瀏覽器中開啟此頁。'); }
+    }
+
+    // wire UI
+    document.getElementById('template').addEventListener('change',(e)=>{ seedTemplate(e.target.value); });
+    document.getElementById('color').addEventListener('input',(e)=>{ state.color.set(e.target.value); const c=state.color; for(let i=0;i<colors.length;i+=3){ colors[i]=c.r; colors[i+1]=c.g; colors[i+2]=c.b; } points.geometry.attributes.color.needsUpdate=true; });
+    document.getElementById('reset').addEventListener('click',()=>{ seedTemplate('heart'); state.color.set('#ff66cc'); document.getElementById('color').value='#ff66cc'; });
+
+    // init
+    initThree(); seedTemplate('heart'); animate(); startCamera();
+    </script>
+</body>
+</html>

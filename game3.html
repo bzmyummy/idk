@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>包剪揼 — Game 3</title>
+    <style>
+        body{display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:linear-gradient(180deg,#021124,#071129);color:#e6eef8;font-family:Inter,Arial}
+        .card{background:rgba(255,255,255,0.03);padding:24px;border-radius:12px;text-align:center;min-width:320px}
+        .choices{display:flex;gap:10px;justify-content:center;margin-top:12px}
+        button{padding:10px 14px;border-radius:8px;border:none;background:#111827;color:#e6eef8}
+        .score{margin-top:12px;color:#9ca3af}
+        a{display:block;margin-top:10px;color:#9ca3af}
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>✊✌️✋ 包剪揼</h2>
+        <div>選擇一個：</div>
+        <div class="choices">
+            <button data-move="rock">✊</button>
+            <button data-move="paper">✋</button>
+            <button data-move="scissors">✌️</button>
+        </div>
+        <div id="result" style="margin-top:12px"></div>
+        <div class="score">你: <span id="pScore">0</span> • 電腦: <span id="cScore">0</span></div>
+        <a href="index.html">← 返回主頁</a>
+    </div>
+
+    <script>
+        const buttons = document.querySelectorAll('button[data-move]');
+        const result = document.getElementById('result'); let pScore=0,cScore=0;
+        function compMove(){ const arr=['rock','paper','scissors']; return arr[Math.floor(Math.random()*3)]; }
+        function decide(p,c){ if(p===c) return 'draw'; if((p==='rock'&&c==='scissors')||(p==='scissors'&&c==='paper')||(p==='paper'&&c==='rock')) return 'win'; return 'lose'; }
+        buttons.forEach(b=>b.addEventListener('click', ()=>{
+            const p = b.dataset.move; const c = compMove(); const r = decide(p,c);
+            if(r==='win'){ pScore++; result.textContent=`你出 ${p}；電腦出 ${c}。你贏！`; }
+            else if(r==='lose'){ cScore++; result.textContent=`你出 ${p}；電腦出 ${c}。你輸啦。`; }
+            else result.textContent=`你出 ${p}；電腦出 ${c}。平手。`;
+            document.getElementById('pScore').textContent=pScore; document.getElementById('cScore').textContent=cScore;
+        }));
+    </script>
+</body>
+</html>

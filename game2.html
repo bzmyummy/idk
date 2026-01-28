@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>猜數字 — Game 2</title>
+    <style>
+        body{font-family:Inter,Arial,sans-serif;background:linear-gradient(180deg,#0f1724,#071129);color:#e6eef8;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
+        .box{background:rgba(255,255,255,0.04);padding:28px;border-radius:12px;text-align:center;min-width:320px}
+        input{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);margin-top:12px}
+        button{margin-top:12px;padding:10px 14px;border-radius:8px;background:#7c3aed;border:none;color:white}
+        a{display:block;margin-top:14px;color:#9ca3af}
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>🎯 猜數字</h2>
+        <p class="hint">我諗住一個 1–100 之間嘅數，你有 8 次機會搵出佢。</p>
+        <input id="guess" type="number" min="1" max="100" placeholder="輸入你嘅猜測 (1-100)">
+        <button id="tryBtn">提交</button>
+        <div id="out" style="margin-top:12px;color:#cbd5e1"></div>
+        <a href="index.html">← 返回主頁</a>
+    </div>
+
+    <script>
+        let target, attempts, maxAttempts=8;
+        const out = document.getElementById('out');
+        function start(){ target = Math.floor(Math.random()*100)+1; attempts=0; out.textContent='開始吧！'; document.getElementById('guess').value=''; }
+        document.getElementById('tryBtn').addEventListener('click', ()=>{
+            const val = Number(document.getElementById('guess').value);
+            if(!val || val<1 || val>100){ out.textContent='請輸入 1 到 100 之間嘅整數。'; return; }
+            attempts++;
+            if(val===target){ out.textContent=`答啱！你用咗 ${attempts} 次。按 Reset 可以再玩。`; } else if(attempts>=maxAttempts){ out.textContent=`Game over，冇機會啦。答案係 ${target}。按 Reset 再試。`; } else {
+                out.textContent = val<target ? `太細！仲有 ${maxAttempts-attempts} 次` : `太大！仲有 ${maxAttempts-attempts} 次`;
+            }
+        });
+        // reset on double click of out
+        out.addEventListener('dblclick', start);
+        // add reset button via keyboard R
+        window.addEventListener('keydown', (e)=>{ if(e.key.toLowerCase()==='r') start(); });
+        start();
+    </script>
+</body>
+</html>
