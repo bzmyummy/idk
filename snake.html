@@ -1,19 +1,152 @@
 <!DOCTYPE html>
-<html lang="zh-HK">
+<html lang="zh-HK" class="dark">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>貪食蛇（修正版）</title>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <style>
-    body{margin:0;height:100vh;display:flex;align-items:center;justify-content:center;background:#071129;color:#e6eef8;font-family:Inter,Arial}
-    .wrap{background:rgba(255,255,255,0.03);padding:18px;border-radius:12px}
-    canvas{background:#000;border-radius:8px;display:block}
-    .row{display:flex;gap:10px;align-items:center;margin-top:8px}
-    button{padding:8px 10px;border-radius:8px;border:none;background:#7c3aed;color:#fff}
-    a{display:block;margin-top:10px;color:#9ca3af}
+    :root {
+      --bg-dark: #071129;
+      --bg-light: #f8fafc;
+      --text-dark: #e6eef8;
+      --text-light: #1e293b;
+      --wrap-bg-dark: rgba(255, 255, 255, 0.03);
+      --wrap-bg-light: rgba(255, 255, 255, 0.95);
+      --wrap-border-dark: rgba(255, 255, 255, 0.08);
+      --wrap-border-light: rgba(0, 0, 0, 0.1);
+      --button-bg: #7c3aed;
+      --link-color-dark: #9ca3af;
+      --link-color-light: #64748b;
+      --score-color-dark: #cbd5e1;
+      --score-color-light: #475569;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Inter, Arial, sans-serif;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.dark {
+      background: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    body:not(.dark) {
+      background: var(--bg-light);
+      color: var(--text-light);
+    }
+
+    .wrap {
+      padding: 18px;
+      border-radius: 12px;
+      transition: all 0.3s;
+    }
+
+    body.dark .wrap {
+      background: var(--wrap-bg-dark);
+      border: 1px solid var(--wrap-border-dark);
+    }
+
+    body:not(.dark) .wrap {
+      background: var(--wrap-bg-light);
+      border: 1px solid var(--wrap-border-light);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    canvas {
+      background: #000;
+      border-radius: 8px;
+      display: block;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    button {
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: none;
+      background: var(--button-bg);
+      color: #fff;
+      cursor: pointer;
+      transition: opacity 0.3s;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    a {
+      display: block;
+      margin-top: 10px;
+      transition: color 0.3s;
+    }
+
+    body.dark a {
+      color: var(--link-color-dark);
+    }
+
+    body:not(.dark) a {
+      color: var(--link-color-light);
+    }
+
+    .row > div {
+      transition: color 0.3s;
+    }
+
+    body.dark .row > div {
+      color: var(--score-color-dark);
+    }
+
+    body:not(.dark) .row > div {
+      color: var(--score-color-light);
+    }
+
+    .theme-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    body:not(.dark) .theme-toggle {
+      background: rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.1);
+    }
+
+    .material-symbols-outlined {
+      font-size: 20px;
+    }
   </style>
 </head>
-<body>
+<body class="dark">
+  <div class="theme-toggle" id="themeToggle">
+    <span class="material-symbols-outlined" id="themeIcon">light_mode</span>
+  </div>
+
   <div class="wrap">
     <h3>貪食蛇（修正版）</h3>
     <canvas id="game" width="400" height="400"></canvas>
@@ -26,65 +159,133 @@
   </div>
 
   <script>
-  (function(){
-    const canvas = document.getElementById('game');
-    const ctx = canvas.getContext('2d');
-    const scale = 20;
-    const cols = canvas.width/scale; const rows = canvas.height/scale;
+    // 主題切換功能
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const body = document.body;
 
-    let dir = {x:1,y:0};
-    let snake = [];
-    let apple = null; let grow = 0; let score = 0;
+    // 檢查保存的主題或系統偏好
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-    function reset(){
-      snake = [];
-      for(let i=0;i<3;i++) snake.push({x:5-i,y:5});
-      dir = {x:1,y:0};
-      placeApple(); score=0; grow=0; updateUI();
+    if (savedTheme === 'light' || (!savedTheme && !prefersDark)) {
+      body.classList.remove('dark');
+      themeIcon.textContent = 'dark_mode';
+    } else {
+      body.classList.add('dark');
+      themeIcon.textContent = 'light_mode';
     }
 
-    function randomPos(){ return {x:Math.floor(Math.random()*cols), y:Math.floor(Math.random()*rows)}; }
-    function placeApple(){ let p; do { p=randomPos(); let on=false; for(let s of snake) if(s.x===p.x && s.y===p.y) on=true; if(!on) break; } while(true); apple=p; }
-
-    function update(){
-      const head = {x:snake[0].x+dir.x, y:snake[0].y+dir.y};
-      // wall collision
-      if(head.x<0||head.x>=cols||head.y<0||head.y>=rows){ reset(); return; }
-      // self collision
-      if(snake.some(s=>s.x===head.x&&s.y===head.y)){ reset(); return; }
-      snake.unshift(head);
-      if(apple && head.x===apple.x && head.y===apple.y){ score+=10; grow+=2; placeApple(); updateHigh(); }
-      if(grow>0){ grow--; } else { snake.pop(); }
-      updateUI();
-    }
-
-    function draw(){
-      ctx.fillStyle='#000'; ctx.fillRect(0,0,canvas.width,canvas.height);
-      // apple
-      if(apple){ ctx.fillStyle='red'; ctx.fillRect(apple.x*scale, apple.y*scale, scale, scale); }
-      // snake
-      for(let i=0;i<snake.length;i++){ ctx.fillStyle = i===0? '#7CFC00' : '#00A000'; ctx.fillRect(snake[i].x*scale, snake[i].y*scale, scale-1, scale-1); }
-    }
-
-    function loop(){ update(); draw(); }
-
-    function updateUI(){ document.getElementById('score').textContent=score; }
-    function updateHigh(){ const h = Math.max(Number(localStorage.getItem('snakeHigh')||0), score); localStorage.setItem('snakeHigh', h); document.getElementById('high').textContent = h; }
-
-    window.addEventListener('keydown', e=>{
-      const k = e.key;
-      if((k==='ArrowUp'||k==='w'||k==='W') && dir.y!==1) dir={x:0,y:-1};
-      if((k==='ArrowDown'||k==='s'||k==='S') && dir.y!==-1) dir={x:0,y:1};
-      if((k==='ArrowLeft'||k==='a'||k==='A') && dir.x!==1) dir={x:-1,y:0};
-      if((k==='ArrowRight'||k==='d'||k==='D') && dir.x!==-1) dir={x:1,y:0};
+    themeToggle.addEventListener('click', () => {
+      if (body.classList.contains('dark')) {
+        body.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+        themeIcon.textContent = 'dark_mode';
+      } else {
+        body.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+        themeIcon.textContent = 'light_mode';
+      }
     });
 
-    document.getElementById('restart').addEventListener('click', reset);
+    // 遊戲邏輯
+    (function(){
+      const canvas = document.getElementById('game');
+      const ctx = canvas.getContext('2d');
+      const scale = 20;
+      const cols = canvas.width/scale; 
+      const rows = canvas.height/scale;
 
-    // init
-    reset(); document.getElementById('high').textContent = localStorage.getItem('snakeHigh')||0;
-    setInterval(loop, 120);
-  })();
+      let dir = {x:1,y:0};
+      let snake = [];
+      let apple = null; 
+      let grow = 0; 
+      let score = 0;
+
+      function reset(){
+        snake = [];
+        for(let i=0;i<3;i++) snake.push({x:5-i,y:5});
+        dir = {x:1,y:0};
+        placeApple(); 
+        score=0; 
+        grow=0; 
+        updateUI();
+      }
+
+      function randomPos(){ 
+        return {x:Math.floor(Math.random()*cols), y:Math.floor(Math.random()*rows)}; 
+      }
+      
+      function placeApple(){ 
+        let p; 
+        do { 
+          p=randomPos(); 
+          let on=false; 
+          for(let s of snake) if(s.x===p.x && s.y===p.y) on=true; 
+          if(!on) break; 
+        } while(true); 
+        apple=p; 
+      }
+
+      function update(){
+        const head = {x:snake[0].x+dir.x, y:snake[0].y+dir.y};
+        // wall collision
+        if(head.x<0||head.x>=cols||head.y<0||head.y>=rows){ reset(); return; }
+        // self collision
+        if(snake.some(s=>s.x===head.x&&s.y===head.y)){ reset(); return; }
+        snake.unshift(head);
+        if(apple && head.x===apple.x && head.y===apple.y){ 
+          score+=10; 
+          grow+=2; 
+          placeApple(); 
+          updateHigh(); 
+        }
+        if(grow>0){ grow--; } else { snake.pop(); }
+        updateUI();
+      }
+
+      function draw(){
+        ctx.fillStyle='#000'; 
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        // apple
+        if(apple){ 
+          ctx.fillStyle='red'; 
+          ctx.fillRect(apple.x*scale, apple.y*scale, scale, scale); 
+        }
+        // snake
+        for(let i=0;i<snake.length;i++){ 
+          ctx.fillStyle = i===0? '#7CFC00' : '#00A000'; 
+          ctx.fillRect(snake[i].x*scale, snake[i].y*scale, scale-1, scale-1); 
+        }
+      }
+
+      function loop(){ update(); draw(); }
+
+      function updateUI(){ 
+        document.getElementById('score').textContent=score; 
+      }
+      
+      function updateHigh(){ 
+        const h = Math.max(Number(localStorage.getItem('snakeHigh')||0), score); 
+        localStorage.setItem('snakeHigh', h); 
+        document.getElementById('high').textContent = h; 
+      }
+
+      window.addEventListener('keydown', e=>{
+        const k = e.key;
+        if((k==='ArrowUp'||k==='w'||k==='W') && dir.y!==1) dir={x:0,y:-1};
+        if((k==='ArrowDown'||k==='s'||k==='S') && dir.y!==-1) dir={x:0,y:1};
+        if((k==='ArrowLeft'||k==='a'||k==='A') && dir.x!==1) dir={x:-1,y:0};
+        if((k==='ArrowRight'||k==='d'||k==='D') && dir.x!==-1) dir={x:1,y:0};
+      });
+
+      document.getElementById('restart').addEventListener('click', reset);
+
+      // init
+      reset(); 
+      document.getElementById('high').textContent = localStorage.getItem('snakeHigh')||0;
+      setInterval(loop, 120);
+    })();
   </script>
 </body>
 </html>

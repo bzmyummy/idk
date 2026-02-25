@@ -1,0 +1,154 @@
+<html lang="zh-Hant"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#7c3bed",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#171121",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Space Grotesk', "Microsoft JhengHei", sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen text-slate-900 dark:text-slate-100">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden font-display">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Header -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 px-6 md:px-20 py-4 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<p class="hidden md:block text-slate-500 dark:text-slate-400 text-sm font-medium">極簡、有趣的迷你遊戲</p>
+</div>
+<div class="flex items-center gap-3 absolute left-1/2 -translate-x-1/2">
+<div class="text-primary">
+<span class="material-symbols-outlined text-3xl">sports_esports</span>
+</div>
+<h1 class="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight tracking-tight">Mini Arcade</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center justify-center rounded-full h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 transition-colors hover:bg-slate-200 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined" data-icon="dark_mode">dark_mode</span>
+</button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex flex-1 justify-center py-12 px-6">
+<div class="layout-content-container flex flex-col max-w-[1000px] flex-1">
+<!-- 2x2 Game Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Card 1: 體感粒子互動 -->
+<div class="flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-800 transition-transform hover:scale-[1.02]">
+<div class="w-full aspect-video bg-gradient-to-br from-purple-100 to-indigo-100 dark:from-purple-900/20 dark:to-indigo-900/20 flex items-center justify-center relative overflow-hidden" data-alt="Abstract colorful flowing particles digital background">
+<span class="material-symbols-outlined text-6xl text-primary opacity-80">bubble_chart</span>
+<div class="absolute top-4 right-4 bg-white/90 dark:bg-slate-800/90 px-3 py-1 rounded-full text-xs font-bold text-primary shadow-sm">
+                                    HOT
+                                </div>
+</div>
+<div class="p-6 flex flex-col gap-4">
+<div>
+<div class="flex items-center justify-between mb-2">
+<h3 class="text-slate-900 dark:text-slate-100 text-xl font-bold">體感粒子互動</h3>
+<span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">中等</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-4">透過肢體動作與數位粒子即時互動，體驗科技魅力與視覺饗宴。</p>
+<div class="flex items-center gap-2 text-xs font-medium text-slate-400 dark:text-slate-500">
+<span class="material-symbols-outlined text-sm">trophy</span>
+<span>最高紀錄：1250 分</span>
+</div>
+</div>
+<button class="w-full flex items-center justify-center rounded-lg h-12 bg-primary text-white text-base font-bold transition-all hover:bg-primary/90 active:scale-95 shadow-lg shadow-primary/20">
+<span>立即開始</span>
+</button>
+</div>
+</div>
+<!-- Card 2: 猜數字遊戲 -->
+<div class="flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-800 transition-transform hover:scale-[1.02]">
+<div class="w-full aspect-video bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/20 dark:to-cyan-900/20 flex items-center justify-center" data-alt="Geometric numbers floating in a clean cyan space">
+<span class="material-symbols-outlined text-6xl text-primary opacity-80">help_center</span>
+</div>
+<div class="p-6 flex flex-col gap-4">
+<div>
+<div class="flex items-center justify-between mb-2">
+<h3 class="text-slate-900 dark:text-slate-100 text-xl font-bold">猜數字遊戲</h3>
+<span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">簡單</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-4">挑戰你的邏輯直覺與運氣，看你是否能在最少次數內猜中神秘數字。</p>
+<div class="flex items-center gap-2 text-xs font-medium text-slate-400 dark:text-slate-500">
+<span class="material-symbols-outlined text-sm">trophy</span>
+<span>最高紀錄：5 次</span>
+</div>
+</div>
+<button class="w-full flex items-center justify-center rounded-lg h-12 bg-primary text-white text-base font-bold transition-all hover:bg-primary/90 active:scale-95 shadow-lg shadow-primary/20">
+<span>立即開始</span>
+</button>
+</div>
+</div>
+<!-- Card 3: 經典包剪揼 -->
+<div class="flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-800 transition-transform hover:scale-[1.02]">
+<div class="w-full aspect-video bg-gradient-to-br from-rose-100 to-pink-100 dark:from-rose-900/20 dark:to-pink-900/20 flex items-center justify-center" data-alt="Stylized rock paper scissors icons in pink theme">
+<span class="material-symbols-outlined text-6xl text-primary opacity-80">front_hand</span>
+</div>
+<div class="p-6 flex flex-col gap-4">
+<div>
+<div class="flex items-center justify-between mb-2">
+<h3 class="text-slate-900 dark:text-slate-100 text-xl font-bold">經典包剪揼</h3>
+<span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">簡單</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-4">與電腦對決經典手勢遊戲，考驗你的心理預判與反應運氣。</p>
+<div class="flex items-center gap-2 text-xs font-medium text-slate-400 dark:text-slate-500">
+<span class="material-symbols-outlined text-sm">trophy</span>
+<span>最高紀錄：12 連勝</span>
+</div>
+</div>
+<button class="w-full flex items-center justify-center rounded-lg h-12 bg-primary text-white text-base font-bold transition-all hover:bg-primary/90 active:scale-95 shadow-lg shadow-primary/20">
+<span>立即開始</span>
+</button>
+</div>
+</div>
+<!-- Card 4: 經典貪食蛇 -->
+<div class="flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-800 transition-transform hover:scale-[1.02]">
+<div class="w-full aspect-video bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/20 dark:to-teal-900/20 flex items-center justify-center" data-alt="Retro snake game pixel art visual">
+<span class="material-symbols-outlined text-6xl text-primary opacity-80">gesture</span>
+</div>
+<div class="p-6 flex flex-col gap-4">
+<div>
+<div class="flex items-center justify-between mb-2">
+<h3 class="text-slate-900 dark:text-slate-100 text-xl font-bold">經典貪食蛇</h3>
+<span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">困難</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-4">操控蛇吞食光點不斷增長，挑戰極限避開障礙與自己的身體。</p>
+<div class="flex items-center gap-2 text-xs font-medium text-slate-400 dark:text-slate-500">
+<span class="material-symbols-outlined text-sm">trophy</span>
+<span>最高紀錄：3200 分</span>
+</div>
+</div>
+<button class="w-full flex items-center justify-center rounded-lg h-12 bg-primary text-white text-base font-bold transition-all hover:bg-primary/90 active:scale-95 shadow-lg shadow-primary/20">
+<span>立即開始</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+
+```</body></html>
